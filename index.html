@@ -150,6 +150,22 @@ input[type="range"] {
 .btn svg { width: 15px; height: 15px; }
 .btn.grow { flex: 1; justify-content: center; }
 
+.shuffle-pair { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.shuffle-pair .btn-random { width: auto; }
+.btn:disabled { opacity: .4; cursor: default; }
+details.fine { border: 1px solid var(--line); border-radius: 8px; background: rgba(0,48,41,.35); }
+details.fine summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; font-size: 13.5px; font-weight: 500; border-radius: 8px;
+}
+details.fine summary::-webkit-details-marker { display: none; }
+details.fine summary:hover { color: var(--accent); }
+details.fine .chev { transition: transform .2s; }
+details.fine[open] .chev { transform: rotate(180deg); }
+details.fine[open] summary { border-bottom: 1px solid var(--line); border-radius: 8px 8px 0 0; }
+.fine-body { display: flex; flex-direction: column; gap: 14px; padding: 14px; }
+.fine-tip { margin: 0; color: var(--ink-dim); font-size: 12.5px; }
 .btn-random {
   appearance: none;
   width: 100%;
@@ -238,7 +254,14 @@ main {
   border-radius: 2px;
 }
 #preview.dragging { cursor: grabbing; }
-.shuffle-bar { display: flex; justify-content: center; padding: 0 16px 14px; }
+.shuffle-bar { display: flex; justify-content: center; align-items: center; gap: 10px; padding: 0 16px 14px; }
+.btn-ghost {
+  appearance: none; cursor: pointer; background: transparent; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 999px; padding: 11px 16px;
+  font: 400 14px var(--font-ui); display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn-ghost:disabled { opacity: .35; cursor: default; }
 .btn-shuffle {
   appearance: none; border: 0; cursor: pointer;
   background: var(--accent); color: var(--accent-ink);
@@ -321,57 +344,58 @@ main {
     </section>
 
     <section class="group" aria-labelledby="lbl-utsnitt">
-      <p class="label" id="lbl-utsnitt">Utsnitt</p>
-      <button class="btn-random" id="random" type="button">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
-        Tilfeldig utsnitt
-      </button>
-
-      <div class="slider">
-        <label for="size">Skalering</label>
-        <input type="range" id="size" min="30" max="1200" step="1">
-        <input type="number" id="sizeN" min="30" max="1200" step="1" aria-label="Skalering i prosent">
-      </div>
-      <div class="slider">
-        <label for="rot">Rotasjon</label>
-        <input type="range" id="rot" min="-180" max="180" step="1">
-        <input type="number" id="rotN" min="-180" max="180" step="1" aria-label="Rotasjon i grader">
-      </div>
-      <div class="row">
-        <button class="btn grow" id="rotL" type="button" aria-label="Roter 90 grader mot klokka">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>−90°
-        </button>
-        <button class="btn grow" id="rotR" type="button" aria-label="Roter 90 grader med klokka">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>+90°
-        </button>
-        <button class="btn grow" id="flipX" type="button" aria-pressed="false" title="Speilvend vannrett">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8 7 3 12l5 5V7z"/><path d="M16 7l5 5-5 5V7z"/></svg>Speil
-        </button>
-        <button class="btn grow" id="flipY" type="button" aria-pressed="false" title="Speilvend loddrett">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8l5-5 5 5H7z"/><path d="M7 16l5 5 5-5H7z"/></svg>Vend
-        </button>
-      </div>
-      <div class="slider">
-        <label for="px">Flytt vannrett</label>
-        <input type="range" id="px" min="-100" max="200" step="0.5">
-        <input type="number" id="pxN" min="-100" max="200" step="0.5" aria-label="Vannrett posisjon i prosent">
-      </div>
-      <div class="slider">
-        <label for="py">Flytt loddrett</label>
-        <input type="range" id="py" min="-100" max="200" step="0.5">
-        <input type="number" id="pyN" min="-100" max="200" step="0.5" aria-label="Loddrett posisjon i prosent">
-      </div>
-    </section>
-
-    <section class="group" aria-labelledby="lbl-visning">
-      <p class="label" id="lbl-visning">Farger og visning</p>
-      <label class="check"><input type="checkbox" id="swap"> Bytt om fargene (lys form på mørk bunn)</label>
+      <p class="label" id="lbl-utsnitt">Visning</p>
       <label class="check"><input type="checkbox" id="guide" checked> Vis hjelpelinjer for tekst og logo</label>
-      <div class="row">
-        <button class="btn grow" id="reset" type="button">Tilbakestill</button>
-        <button class="btn grow" id="share" type="button">Kopier lenke til utsnittet</button>
-      </div>
     </section>
+
+    <details class="fine" id="fine">
+      <summary>
+        <span>Finjuster utsnittet</span>
+        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="fine-body">
+        <p class="fine-tip">Du kan også dra direkte i bildet, scrolle for å skalere og holde inne Shift mens du scroller for å rotere.</p>
+        <div class="slider">
+          <label for="size">Skalering</label>
+          <input type="range" id="size" min="30" max="1200" step="1">
+          <input type="number" id="sizeN" min="30" max="1200" step="1" aria-label="Skalering i prosent">
+        </div>
+        <div class="slider">
+          <label for="rot">Rotasjon</label>
+          <input type="range" id="rot" min="-180" max="180" step="1">
+          <input type="number" id="rotN" min="-180" max="180" step="1" aria-label="Rotasjon i grader">
+        </div>
+        <div class="row">
+          <button class="btn grow" id="rotL" type="button" aria-label="Roter 90 grader mot klokka">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>−90°
+          </button>
+          <button class="btn grow" id="rotR" type="button" aria-label="Roter 90 grader med klokka">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>+90°
+          </button>
+          <button class="btn grow" id="flipX" type="button" aria-pressed="false" title="Speilvend vannrett">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8 7 3 12l5 5V7z"/><path d="M16 7l5 5-5 5V7z"/></svg>Speil
+          </button>
+          <button class="btn grow" id="flipY" type="button" aria-pressed="false" title="Speilvend loddrett">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8l5-5 5 5H7z"/><path d="M7 16l5 5 5-5H7z"/></svg>Vend
+          </button>
+        </div>
+        <div class="slider">
+          <label for="px">Flytt vannrett</label>
+          <input type="range" id="px" min="-400" max="500" step="0.5">
+          <input type="number" id="pxN" min="-400" max="500" step="0.5" aria-label="Vannrett posisjon i prosent">
+        </div>
+        <div class="slider">
+          <label for="py">Flytt loddrett</label>
+          <input type="range" id="py" min="-400" max="500" step="0.5">
+          <input type="number" id="pyN" min="-400" max="500" step="0.5" aria-label="Loddrett posisjon i prosent">
+        </div>
+        <label class="check"><input type="checkbox" id="swap"> Bytt om fargene (lys form på mørk bunn)</label>
+        <div class="row">
+          <button class="btn grow" id="reset" type="button">Tilbakestill</button>
+          <button class="btn grow" id="share" type="button">Kopier lenke til utsnittet</button>
+        </div>
+      </div>
+    </details>
 
     <section class="export" aria-labelledby="lbl-export">
       <p class="label" id="lbl-export">Eksporter</p>
@@ -400,9 +424,12 @@ main {
       <div class="canvas-wrap"><canvas id="preview" tabindex="0" aria-label="Forhåndsvisning. Dra for å flytte, scroll for å skalere."></canvas></div>
     </div>
     <div class="shuffle-bar">
-      <button class="btn-shuffle" id="random2" type="button">
+      <button class="btn-ghost" id="prev" type="button" disabled title="Gå tilbake til forrige utsnitt">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Forrige
+      </button>
+      <button class="btn-shuffle" id="random" type="button">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
-        Nytt tilfeldig utsnitt
+        Nytt utsnitt
       </button>
     </div>
     <div class="hint">
@@ -438,7 +465,8 @@ main {
     { id: 'cust', name: 'Annet',    ratio: 'B×H',    w: 1080, h: 1080 },
   ];
 
-  const DEFAULT = { f: 'sq', w: 1080, h: 1080, x: 62, y: 70, s: 330, r: -34, fx: false, fy: false, sw: false };
+  // Standard = Patentstyrets eget kvadratiske utsnitt (målt fra Bakgrunn_01)
+  const DEFAULT = { f: 'sq', w: 1080, h: 1080, x: 282.1, y: 88.2, s: 621.7, r: 56.8, fx: false, fy: false, sw: false };
   let state = { ...DEFAULT };
   let guide = true;
   let mult = 1;
@@ -564,8 +592,8 @@ main {
   }
   bindPair('size', 'sizeN', 's', 30, 1200);
   bindPair('rot', 'rotN', 'r', -180, 180);
-  bindPair('px', 'pxN', 'x', -100, 200);
-  bindPair('py', 'pyN', 'y', -100, 200);
+  bindPair('px', 'pxN', 'x', -400, 500);
+  bindPair('py', 'pyN', 'y', -400, 500);
 
   const normRot = r => { r = ((r + 180) % 360 + 360) % 360 - 180; return Math.round(r * 10) / 10; };
   $('rotL').addEventListener('click', () => { state.r = normRot(state.r - 90); sync(); draw(); saveLocal(); });
@@ -626,8 +654,8 @@ main {
     if (pointers.size === 1) {
       state.x += (cur.x - prev.x) / cssW * 100;
       state.y += (cur.y - prev.y) / cssH * 100;
-      state.x = Math.min(200, Math.max(-100, state.x));
-      state.y = Math.min(200, Math.max(-100, state.y));
+      state.x = Math.min(500, Math.max(-400, state.x));
+      state.y = Math.min(500, Math.max(-400, state.y));
     } else if (pointers.size === 2 && pinchStart) {
       const [a, b] = [...pointers.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
@@ -666,12 +694,22 @@ main {
   });
 
   // ---------- Tilfeldig utsnitt ----------
-  // Prøver tilfeldige utsnitt til formen dekker en passende del av flaten (25–60 %)
-  // og har en tydelig kant, slik at det blir et spennende snitt – ikke en tom eller helt fylt flate.
+  // Reglene er målt fra Patentstyrets egne, håndlagde utsnitt:
+  //  * Symbolet er forstørret 5,6–8,6 ganger (i prosent av lengste side).
+  //  * Enden av den smale kanalen i symbolet («innhugget») ligger inne i bildet, nær en kant.
+  //    Derfra vider kanalen seg ut som et lyst bånd over midten av bildet.
+  //  * Symbolet dekker minst to av de fire hjørnene og 42–68 % av flaten.
+  //  * Kjernen i midten (60 % × 24 %) er nesten fri for symbolet, så tekst ligger rolig.
+  // Symbolet er punktsymmetrisk, så innhugget finnes to steder (oppe til høyre og nede til venstre).
+  const TIPS = [[1232.8, 290.4], [215.2, 1157.6]];
+  const RULES = { sMin: 560, sMax: 860, covMin: 0.42, covMax: 0.68, coreMax: 0.25, cornersMin: 2 };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
   const probe = document.createElement('canvas');
-  function coverage(cand) {
-    const PW = 96, PH = Math.max(24, Math.round(96 * state.h / state.w));
-    probe.width = PW; probe.height = PH;
+  const PROBE = 64;
+  function measure(cand) {
+    const PW = PROBE, PH = Math.max(16, Math.round(PROBE * cand.h / cand.w));
+    if (probe.width !== PW || probe.height !== PH) { probe.width = PW; probe.height = PH; }
     const ctx = probe.getContext('2d', { willReadFrequently: true });
     const saved = state; state = cand;
     ctx.setTransform(PW / cand.w, 0, 0, PH / cand.h, 0, 0);
@@ -680,53 +718,89 @@ main {
     ctx.fillStyle = '#fff'; P2D.forEach(p => ctx.fill(p));
     state = saved;
     const d = ctx.getImageData(0, 0, PW, PH).data;
-    let on = 0, edges = 0;
-    for (let y = 0; y < PH; y++) for (let x = 0; x < PW; x++) {
-      const v = d[(y * PW + x) * 4] > 127;
-      if (v) on++;
-      if (x > 0 && v !== (d[(y * PW + x - 1) * 4] > 127)) edges++;
+    let on = 0, coreOn = 0, coreN = 0;
+    const corner = [0, 0, 0, 0], cornerN = [0, 0, 0, 0];
+    for (let y = 0; y < PH; y++) {
+      const v = (y + 0.5) / PH;
+      for (let x = 0; x < PW; x++) {
+        const u = (x + 0.5) / PW;
+        const f = d[(y * PW + x) * 4] > 127 ? 1 : 0;
+        on += f;
+        if (Math.abs(u - 0.5) < 0.2 && Math.abs(v - 0.5) < 0.12) { coreOn += f; coreN++; }
+        const ci = (u < 0.1 ? 0 : u > 0.9 ? 1 : -1);
+        const cj = (v < 0.1 ? 0 : v > 0.9 ? 2 : -1);
+        if (ci >= 0 && cj >= 0) { corner[ci + cj] += f; cornerN[ci + cj]++; }
+      }
     }
-    return { cov: on / (PW * PH), edges };
+    return {
+      cov: on / (PW * PH),
+      core: coreOn / Math.max(1, coreN),
+      corners: corner.filter((c, i) => c / Math.max(1, cornerN[i]) > 0.6).length,
+    };
   }
-  const rnd = (a, b) => a + Math.random() * (b - a);
-  // Punkter i logosymbolet (i symbolets egne koordinater) der de buede overgangene ligger.
-  // Tilfeldige utsnitt sikter mot ett av disse, slik at kurvene – det mest karakteristiske – kommer med.
-  const FOCI = [[640, 1225], [285, 1085], [808, 195], [1163, 362], [560, 1150], [890, 290]];
+
   function candidate() {
     const W = state.w, H = state.h;
-    const s = rnd(280, 680);
-    const r = normRot(Math.floor(rnd(0, 4)) * 90 + (Math.random() < .5 ? -1 : 1) * Math.round(rnd(15, 65)));
-    const fx = Math.random() < 0.35;
-    const [fX, fY] = FOCI[Math.floor(Math.random() * FOCI.length)];
+    const s = rnd(RULES.sMin, RULES.sMax);
+    const r = Math.round(rnd(-180, 180) * 10) / 10;
+    const fx = Math.random() < 0.5;
+    const [tX, tY] = TIPS[Math.random() < 0.5 ? 0 : 1];
+    // Innhugget plasseres nær en tilfeldig kant, inne i bildet
+    const t = rnd(0.08, 0.92), dEdge = rnd(0.04, 0.2);
+    const [u, v] = [[t, dEdge], [1 - dEdge, t], [t, 1 - dEdge], [dEdge, t]][Math.floor(Math.random() * 4)];
     const k = (s / 100) * Math.max(W, H) / VB;
     const a = r * Math.PI / 180;
-    const vx = (fX - C) * k * (fx ? -1 : 1), vy = (fY - C) * k;
+    const vx = (tX - C) * k * (fx ? -1 : 1), vy = (tY - C) * k;
     const rx = vx * Math.cos(a) - vy * Math.sin(a), ry = vx * Math.sin(a) + vy * Math.cos(a);
-    const dx = rnd(0.25, 0.75) * W, dy = rnd(0.25, 0.75) * H;   // hvor kurven havner i flaten
-    return { ...state, s, r, fx, fy: false, x: (dx - rx) / W * 100, y: (dy - ry) / H * 100 };
+    return { ...state, s, r, fx, fy: false, x: (u * W - rx) / W * 100, y: (v * H - ry) / H * 100 };
   }
-  function randomize() {
+
+  function score(m) {
+    let p = 0;
+    if (m.cov < RULES.covMin) p += RULES.covMin - m.cov;
+    if (m.cov > RULES.covMax) p += m.cov - RULES.covMax;
+    if (m.core > RULES.coreMax) p += (m.core - RULES.coreMax) * 2;
+    if (m.corners < RULES.cornersMin) p += (RULES.cornersMin - m.corners) * 0.3;
+    return p;   // 0 = oppfyller alle reglene
+  }
+
+  const history = [];
+  function pushHistory() {
+    history.push({ ...state });
+    if (history.length > 40) history.shift();
+    $('prev').disabled = false;
+  }
+  $('prev').addEventListener('click', () => {
+    const last = history.pop();
+    if (!last) return;
+    state = { ...last, f: state.f, w: state.w, h: state.h };
+    $('prev').disabled = history.length === 0;
+    sync(); draw(); saveLocal();
+  });
+
+  function randomize(opts = {}) {
     let best = null;
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 600; i++) {
       const cand = candidate();
-      if (cand.x < -100 || cand.x > 200 || cand.y < -100 || cand.y > 200) continue;
-      const { cov, edges } = coverage(cand);
-      const score = Math.abs(cov - 0.5) + (edges < 20 ? 1 : 0);
-      if (!best || score < best.score) best = { cand, score };
-      if (cov > 0.33 && cov < 0.68 && edges >= 20) { best = { cand, score }; break; }
+      const sc = score(measure(cand));
+      if (!best || sc < best.sc) best = { cand, sc };
+      if (sc === 0) break;
     }
-    if (!best) return;
+    if (!opts.silent) pushHistory();
     state = best.cand;
     sync(); draw(); saveLocal();
   }
-  $('random').addEventListener('click', randomize);
-  $('random2').addEventListener('click', randomize);
+  $('random').addEventListener('click', () => randomize());
   document.addEventListener('keydown', e => {
     if (e.code !== 'Space' || e.repeat) return;
     const t = e.target;
-    if (t.closest && t.closest('input, button, select, textarea')) return;
+    if (t.closest && t.closest('input, button, select, textarea, summary')) return;
     e.preventDefault(); randomize();
   });
+
+  // Husk om finjusteringspanelet er åpent
+  try { if (localStorage.getItem('ps-bg-fine') === '1') $('fine').open = true; } catch (e) {}
+  $('fine').addEventListener('toggle', () => { try { localStorage.setItem('ps-bg-fine', $('fine').open ? '1' : '0'); } catch (e) {} });
 
   // ---------- Eksport ----------
   const fileBase = () => `patentstyret-bakgrunn-${state.w}x${state.h}`;
@@ -818,7 +892,7 @@ main {
     if (loaded) state = { ...DEFAULT, ...loaded };
     sync();
     layout();
-    if (!loaded) randomize();
+    if (!loaded) randomize({ silent: true });
     new ResizeObserver(layout).observe(stage);
     if (document.fonts) document.fonts.ready.then(draw);
   })();
