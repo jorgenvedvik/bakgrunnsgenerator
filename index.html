@@ -797,17 +797,17 @@ main {
     return p;   // 0 = oppfyller alle reglene
   }
 
-  const history = [];
+  const undoStack = [];
   function pushHistory() {
-    history.push({ ...state });
-    if (history.length > 40) history.shift();
+    undoStack.push({ ...state });
+    if (undoStack.length > 40) undoStack.shift();
     $('prev').disabled = false;
   }
   $('prev').addEventListener('click', () => {
-    const last = history.pop();
+    const last = undoStack.pop();
     if (!last) return;
     state = { ...last, f: state.f, w: state.w, h: state.h };
-    $('prev').disabled = history.length === 0;
+    $('prev').disabled = undoStack.length === 0;
     sync(); draw(); saveLocal();
   });
 
