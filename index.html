@@ -4,25 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bakgrunnsgenerator</title>
-<meta name="description" content="Lag nye utsnitt av Patentstyrets logobakgrunn og eksporter som PNG, JPG eller SVG.">
-<!-- PUI – Patentstyrets designsystem (@patentstyret/designsystem 1.2.0), lagt i vendor/pui -->
-<link rel="stylesheet" href="vendor/pui/global.css">
-<script type="module" src="vendor/pui/ps-designsystem/ps-designsystem.esm.js"></script>
+<meta name="description" content="Lag nye utsnitt av Patentstyrets logobakgrunn og eksporter som PNG eller SVG.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400&display=swap">
 <style>
-/* Layout: mosegrønn topplinje som på patentstyret.no, lyst kontrollpanel med PUI-komponenter, nøytral arbeidsflate for bildet.
-   Alle farger og vekter hentes fra PUI-tokenene (--ds-*). */
+/* Layout: kontrollpanel til venstre, stor forhåndsvisning til høyre. Én bevisst mørk merkevareflate. */
 :root {
-  --bg-art: #00342e;            /* bakgrunnsfarge i utsnittet (= mosegrønn) */
-  --shape-art: #002b25;         /* logosymbolet i utsnittet */
-  --ink: var(--ds-color-black, #212121);
-  --ink-dim: var(--ds-color-neutral-60, #666);
-  --line: var(--ds-color-neutral-20, #ccc);
-  --panel: var(--ds-color-bg-light, #fffef5);
-  --stage: var(--ds-color-neutral-05, #f2f2f2);
-  --brand: var(--ds-color-mosegroenn, #00342e);
-  --accent: var(--ds-color-spiregroenn, #cef261);
-  --unit: 8px;                  /* PUI: --ds-spacing-factor = 8 */
-  color-scheme: light;
+  --brand-bg: #00342e;      /* bakgrunnsfarge */
+  --brand-shape: #002b25;   /* logosymbol-utsnitt */
+  --ink: #e9f2ef;
+  --ink-dim: #9fb8b2;
+  --line: #0d4a42;
+  --panel: #00241f;
+  --field: #003029;
+  --accent: #d4f26a;        /* lime fra malene */
+  --accent-ink: #00241f;
+  --font-ui: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -31,139 +31,227 @@ body {
   margin: 0;
   background: var(--panel);
   color: var(--ink);
-  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
-  display: flex;
-  flex-direction: column;
+  font: 400 14px/1.45 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
 }
-
-/* Topplinje */
-.topbar {
-  background: var(--brand);
-  color: var(--ds-color-white, #fff);
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 3);
-  padding-block: calc(var(--unit) * 2);
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: max(24px, env(safe-area-inset-right, 0px));
-}
-.topbar .logo { width: 152px; flex: none; line-height: 0; }
-.topbar .sep { width: 1px; align-self: stretch; background: rgba(255,255,255,.25); }
-.topbar h1 { margin: 0; font-size: var(--ds-font-size-large, 1.25rem); font-weight: var(--ds-font-weight-medium, 500); line-height: 1.2; }
-.topbar p { margin: 2px 0 0; font-size: var(--ds-font-size-xsmall, .875rem); color: var(--ds-color-lys-svalgroenn, #d9ffe3); opacity: .85; }
-
 .app {
-  flex: 1;
-  min-height: 0;
   display: grid;
-  grid-template-columns: 380px minmax(0, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
+  height: 100%;
 }
-
-/* Kontrollpanel */
 aside {
-  background: var(--panel);
   border-right: 1px solid var(--line);
   overflow-y: auto;
-  padding-block: calc(var(--unit) * 3) calc(var(--unit) * 4);
-  padding-left: max(24px, env(safe-area-inset-left, 0px));
-  padding-right: 24px;
+  padding-block: 20px 28px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: 20px;
   display: flex;
   flex-direction: column;
-  gap: calc(var(--unit) * 3);
+  gap: 22px;
 }
-.group { display: flex; flex-direction: column; gap: calc(var(--unit) * 1.5); }
-.group > h2 {
+header.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+header.brand svg { width: 30px; height: 30px; flex: none; }
+header.brand h1 {
   margin: 0;
-  font-size: var(--ds-font-size-small, 1rem);
-  font-weight: var(--ds-font-weight-medium, 500);
-  color: var(--brand);
+  font-weight: 300;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+header.brand p { margin: 2px 0 0; color: var(--ink-dim); font-size: 12.5px; }
+
+section.group { display: flex; flex-direction: column; gap: 10px; }
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-dim);
+  margin: 0;
 }
 
-/* Formatvalg (PUI har ingen tilsvarende komponent, så kortene er bygget av PUI-tokenene) */
-.formats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--unit); }
+/* Formatvalg */
+.formats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
 .fmt {
   appearance: none;
   border: 1px solid var(--line);
-  background: var(--ds-color-white, #fff);
+  background: var(--field);
   color: var(--ink);
-  border-radius: 8px;
-  padding: 10px 4px 9px;
+  border-radius: 6px;
+  padding: 8px 4px 7px;
   font: inherit;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
-  transition: border-color .15s, background .15s;
 }
-.fmt .shape { border: 1.5px solid currentColor; border-radius: 2px; opacity: .7; margin-bottom: 2px; }
-.fmt .name { font-size: var(--ds-font-size-xsmall, .875rem); line-height: 1.1; }
-.fmt .ratio { font-size: 1.0625rem; font-weight: var(--ds-font-weight-bold, 700); line-height: 1.1; color: var(--brand); font-variant-numeric: tabular-nums; }
-.fmt .dim { font-size: .75rem; line-height: 1; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
-.fmt:hover { border-color: var(--brand); }
-.fmt[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--ds-color-white, #fff); }
-.fmt[aria-pressed="true"] .ratio { color: var(--accent); }
-.fmt[aria-pressed="true"] .dim { color: var(--ds-color-lys-svalgroenn, #d9ffe3); }
-.custom { display: grid; grid-template-columns: 1fr 1fr; gap: var(--unit); }
+.fmt .shape { border: 1.5px solid currentColor; border-radius: 2px; opacity: .75; }
+.fmt .name { font-size: 12px; line-height: 1.1; }
+.fmt .ratio { font: 500 13px/1 var(--font-mono); letter-spacing: .02em; }
+.fmt .dim { font: 400 10px/1 var(--font-mono); color: var(--ink-dim); }
+.fmt[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.fmt[aria-pressed="true"] .dim { color: var(--accent); opacity: .8; }
+.fmt:hover { border-color: #1b6a5f; }
 
-/* Rader med etikett + PUI-toggle */
-.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--unit) * 2); font-size: var(--ds-font-size-xsmall, .875rem); }
-.toggle-row small { display: block; color: var(--ink-dim); font-size: .8125rem; }
+.custom {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+.custom span { color: var(--ink-dim); }
 
-/* Glidere (PUI har ingen glider; stylet med PUI-tokenene) */
-.fine-body { display: flex; flex-direction: column; gap: calc(var(--unit) * 2); padding-top: var(--unit); }
-.fine-tip { margin: 0; color: var(--ink-dim); font-size: .8125rem; }
-.slider { display: grid; grid-template-columns: 1fr 88px; gap: 4px 12px; align-items: center; }
-.slider label { grid-column: 1 / -1; font-size: var(--ds-font-size-xsmall, .875rem); font-weight: var(--ds-font-weight-medium, 500); }
-input[type="range"] { width: 100%; margin: 0; accent-color: var(--brand); }
-.num {
+input[type="number"] {
   width: 100%;
-  border: 1px solid var(--brand);
-  border-radius: 0;
-  background: var(--ds-color-white, #fff);
+  background: var(--field);
+  border: 1px solid var(--line);
   color: var(--ink);
-  padding: 6px 8px;
-  font: inherit;
-  font-size: var(--ds-font-size-xsmall, .875rem);
-  text-align: right;
+  border-radius: 6px;
+  padding: 7px 9px;
+  font: 400 13px var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
-.btn-row { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--unit); }
-.btn-row ps-button { display: block; min-width: 0; }
-ps-button .ico { display: inline-flex; vertical-align: middle; margin-right: 4px; }
-ps-material-symbol.flipv { transform: rotate(90deg); }
+
+/* Glidere */
+.slider { display: grid; grid-template-columns: 1fr 74px; gap: 4px 10px; align-items: center; }
+.slider label { grid-column: 1 / -1; font-size: 13px; display: flex; justify-content: space-between; }
+.slider input[type="number"] { padding: 5px 7px; font-size: 12px; text-align: right; }
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.row { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.btn.grow, .row .btn { justify-content: center; padding-inline: 4px; gap: 4px; min-width: 0; font-size: 12.5px; }
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--field);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 7px 11px;
+  font: 400 13px var(--font-ui);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:hover { border-color: #1b6a5f; }
+.btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.btn svg { width: 15px; height: 15px; }
+.btn.grow { flex: 1; justify-content: center; }
+
+.shuffle-pair { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.shuffle-pair .btn-random { width: auto; }
+.btn:disabled { opacity: .4; cursor: default; }
+details.fine { border: 1px solid var(--line); border-radius: 8px; background: rgba(0,48,41,.35); }
+details.fine summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; font-size: 13.5px; font-weight: 500; border-radius: 8px;
+}
+details.fine summary::-webkit-details-marker { display: none; }
+details.fine summary:hover { color: var(--accent); }
+details.fine .chev { transition: transform .2s; }
+details.fine[open] .chev { transform: rotate(180deg); }
+details.fine[open] summary { border-bottom: 1px solid var(--line); border-radius: 8px 8px 0 0; }
+.fine-body { display: flex; flex-direction: column; gap: 14px; padding: 14px; }
+.fine-tip { margin: 0; color: var(--ink-dim); font-size: 12.5px; }
+.btn-random {
+  appearance: none;
+  width: 100%;
+  border: 1px dashed #2a7a6e;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 11px;
+  font: 400 14px var(--font-ui);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.btn-random:hover { border-color: var(--accent); color: var(--accent); }
+
+.switch {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 13px; cursor: pointer;
+}
+.switch > span { display: flex; flex-direction: column; gap: 2px; }
+.switch small { color: var(--ink-dim); font-size: 12px; }
+.switch input {
+  appearance: none; -webkit-appearance: none; flex: none; margin: 0; cursor: pointer;
+  width: 38px; height: 22px; border-radius: 999px;
+  background: var(--field); border: 1px solid #1b6a5f;
+  position: relative; transition: background .18s, border-color .18s;
+}
+.switch input::after {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--ink-dim); transition: transform .18s, background .18s;
+}
+.switch input:checked { background: var(--accent); border-color: var(--accent); }
+.switch input:checked::after { transform: translateX(16px); background: var(--accent-ink); }
+@media (prefers-reduced-motion: reduce) { .switch input, .switch input::after { transition: none; } }
 
 /* Eksport */
-.export { margin-top: auto; border-top: 1px solid var(--line); padding-top: calc(var(--unit) * 3); }
-.scale-pick { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--unit) * 2); font-size: var(--ds-font-size-xsmall, .875rem); }
-.seg { display: flex; gap: 4px; }
-.outsize { font-size: .8125rem; color: var(--ink-dim); text-align: center; font-variant-numeric: tabular-nums; }
+.export {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.btn-primary {
+  appearance: none;
+  border: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 8px;
+  padding: 13px 14px;
+  font: 500 15px var(--font-ui);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-primary svg { width: 18px; height: 18px; }
+.export .row .btn { flex: 1; justify-content: center; }
+.scale-pick { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-dim); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button {
+  appearance: none; border: 0; background: var(--field); color: var(--ink);
+  font: 400 12px var(--font-mono); padding: 6px 10px; cursor: pointer;
+}
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.outsize { font: 400 11.5px var(--font-mono); color: var(--ink-dim); text-align: center; }
 
-/* PUI-accordion har marger laget for artikkelsider; tilpasset et smalt panel */
-#fine .ds-accordion__panel-inner { padding: 16px 16px 20px; }
-#fine .ds-accordion__btn { padding-inline: 4px; }
-.toggle-row ps-toggle { flex: none; }
-.toggle-row > span { line-height: 1.35; }
-.toggle-row .ds-toggle { width: 120px; min-width: 0; }
-.toggle-row .ds-toggle-label-left, .toggle-row .ds-toggle-label-right { margin: 0 .75rem; }
-.fine-tip, .slider label { line-height: 1.4; }
-.btn-row ps-button button, .seg ps-button button { white-space: nowrap; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* Deaktivert tilstand (ps-button har ingen disabled-egenskap) */
-.is-disabled { opacity: .4; pointer-events: none; }
-
-/* Arbeidsflate */
+/* Forhåndsvisning */
 main {
   position: relative;
   min-width: 0;
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 24px 24px,
-    var(--stage);
+    radial-gradient(circle at 1px 1px, #0a3a33 1px, transparent 0) 0 0 / 22px 22px,
+    #001c18;
 }
 .stage {
   flex: 1;
@@ -173,131 +261,178 @@ main {
   padding: 32px;
   padding-right: max(32px, env(safe-area-inset-right, 0px));
 }
-.canvas-wrap { line-height: 0; box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 16px 40px rgba(0,52,46,.22); }
-#preview { display: block; cursor: grab; touch-action: none; }
+.canvas-wrap {
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0,0,0,.45);
+  line-height: 0;
+}
+#preview {
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 2px;
+}
 #preview.dragging { cursor: grabbing; }
-#preview:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-.shuffle-bar { display: flex; justify-content: center; align-items: center; gap: calc(var(--unit) * 1.5); padding: 0 16px calc(var(--unit) * 1.5); }
+.shuffle-bar { display: flex; justify-content: center; align-items: center; gap: 10px; padding: 0 16px 14px; }
+.btn-ghost {
+  appearance: none; cursor: pointer; background: transparent; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 999px; padding: 11px 16px;
+  font: 400 14px var(--font-ui); display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn-ghost:disabled { opacity: .35; cursor: default; }
+.btn-shuffle {
+  appearance: none; border: 0; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink);
+  border-radius: 999px; padding: 12px 22px;
+  font: 500 15px var(--font-ui);
+  display: inline-flex; align-items: center; gap: 9px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+.btn-shuffle:hover { filter: brightness(1.06); }
+.btn-shuffle:active { transform: translateY(1px); }
 .hint {
-  display: flex; justify-content: center; gap: calc(var(--unit) * 2.5); flex-wrap: wrap;
-  padding: 0 16px calc(var(--unit) * 2.5);
-  color: var(--ink-dim); font-size: .8125rem;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 0 16px 18px;
+  color: var(--ink-dim);
+  font-size: 12px;
 }
 .hint kbd {
-  font: inherit; font-size: .75rem;
-  border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px;
-  padding: 0 5px; background: var(--ds-color-white, #fff); color: var(--ink);
+  font: 400 11px var(--font-mono);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--ink);
 }
-.toast-host {
-  position: fixed;
-  right: max(24px, env(safe-area-inset-right, 0px));
+.toast {
+  position: absolute;
+  left: 50%;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  z-index: 10;
-  max-width: calc(100% - 48px);
+  transform: translate(-50%, 12px);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
 }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-@media (max-width: 860px) {
+@media (max-width: 820px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; }
   html, body { height: auto; }
-  .app { grid-template-columns: 1fr; }
   main { order: -1; }
   .stage { height: 62vh; padding: 16px; }
   aside {
-    border-right: 0; border-top: 1px solid var(--line);
+    border-right: 0;
+    border-top: 1px solid var(--line);
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  .topbar { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: 16px; }
-  .topbar .logo { width: 120px; }
-  .topbar p { display: none; }
   .hint { display: none; }
 }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="logo"><ps-logo color="secondary" fluid language="no"></ps-logo></div>
-  <span class="sep" aria-hidden="true"></span>
-  <div>
-    <h1>Bakgrunnsgenerator</h1>
-    <p>Utsnitt av logosymbolet til Some-maler</p>
-  </div>
-</header>
-
 <div class="app">
   <aside>
-    <section class="group" aria-labelledby="h-format">
-      <h2 id="h-format">Format</h2>
+    <header class="brand">
+      <svg viewBox="0 0 1448.03 1448.03" aria-hidden="true"><g fill="#ffffff"><path id="logoA" d=""/><path id="logoB" d=""/></g></svg>
+      <div>
+        <h1>Bakgrunnsgenerator</h1>
+        <p>Utsnitt av logosymbolet for Some-maler</p>
+      </div>
+    </header>
+
+    <section class="group" aria-labelledby="lbl-format">
+      <p class="label" id="lbl-format">Format</p>
       <div class="formats" id="formats"></div>
       <div class="custom" id="customBox" hidden>
-        <ps-text-field id="cw" label="Bredde (px)" type="number" density="compact"></ps-text-field>
-        <ps-text-field id="ch" label="Høyde (px)" type="number" density="compact"></ps-text-field>
+        <input type="number" id="cw" min="50" max="8000" step="1" aria-label="Bredde i piksler">
+        <span>×</span>
+        <input type="number" id="ch" min="50" max="8000" step="1" aria-label="Høyde i piksler">
       </div>
     </section>
 
-    <section class="group" aria-labelledby="h-visning">
-      <h2 id="h-visning">Visning</h2>
-      <div class="toggle-row">
-        <span id="lbl-guide">Vis hjelpelinjer for tekst og logo</span>
-        <ps-toggle id="guide" value label-on="På" label-off="Av" aria-label="Vis hjelpelinjer for tekst og logo"></ps-toggle>
-      </div>
+    <section class="group" aria-labelledby="lbl-utsnitt">
+      <p class="label" id="lbl-utsnitt">Visning</p>
+      <label class="switch"><span>Vis hjelpelinjer for tekst og logo</span><input type="checkbox" role="switch" id="guide" checked></label>
     </section>
 
-    <ps-accordion id="fine" label="Finjuster utsnittet">
+    <details class="fine" id="fine">
+      <summary>
+        <span>Finjuster utsnittet</span>
+        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
       <div class="fine-body">
         <p class="fine-tip">Du kan også dra direkte i bildet, scrolle for å skalere og holde inne Shift mens du scroller for å rotere.</p>
         <div class="slider">
-          <label for="size">Skalering (%)</label>
+          <label for="size">Skalering</label>
           <input type="range" id="size" min="30" max="1200" step="1">
-          <input class="num" type="number" id="sizeN" min="30" max="1200" step="1" aria-label="Skalering i prosent">
+          <input type="number" id="sizeN" min="30" max="1200" step="1" aria-label="Skalering i prosent">
         </div>
         <div class="slider">
-          <label for="rot">Rotasjon (grader)</label>
+          <label for="rot">Rotasjon</label>
           <input type="range" id="rot" min="-180" max="180" step="1">
-          <input class="num" type="number" id="rotN" min="-180" max="180" step="1" aria-label="Rotasjon i grader">
+          <input type="number" id="rotN" min="-180" max="180" step="1" aria-label="Rotasjon i grader">
         </div>
-        <div class="btn-row">
-          <ps-button id="rotL" color="primary-o" size="small" fluid title="Roter 90 grader mot klokka"><span class="ico"><ps-material-symbol symbol="rotate_left" size="small" ariahidden="true"></ps-material-symbol></span>−90°</ps-button>
-          <ps-button id="rotR" color="primary-o" size="small" fluid title="Roter 90 grader med klokka"><span class="ico"><ps-material-symbol symbol="rotate_right" size="small" ariahidden="true"></ps-material-symbol></span>+90°</ps-button>
-        </div>
-        <div class="btn-row">
-          <ps-button id="flipX" color="primary-o" size="small" fluid title="Speilvend vannrett"><span class="ico"><ps-material-symbol symbol="flip" size="small" ariahidden="true"></ps-material-symbol></span>Speil</ps-button>
-          <ps-button id="flipY" color="primary-o" size="small" fluid title="Speilvend loddrett"><span class="ico"><ps-material-symbol class="flipv" symbol="flip" size="small" ariahidden="true"></ps-material-symbol></span>Vend</ps-button>
+        <div class="row">
+          <button class="btn grow" id="rotL" type="button" aria-label="Roter 90 grader mot klokka">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>−90°
+          </button>
+          <button class="btn grow" id="rotR" type="button" aria-label="Roter 90 grader med klokka">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>+90°
+          </button>
+          <button class="btn grow" id="flipX" type="button" aria-pressed="false" title="Speilvend vannrett">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8 7 3 12l5 5V7z"/><path d="M16 7l5 5-5 5V7z"/></svg>Speil
+          </button>
+          <button class="btn grow" id="flipY" type="button" aria-pressed="false" title="Speilvend loddrett">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8l5-5 5 5H7z"/><path d="M7 16l5 5 5-5H7z"/></svg>Vend
+          </button>
         </div>
         <div class="slider">
-          <label for="px">Flytt vannrett (%)</label>
+          <label for="px">Flytt vannrett</label>
           <input type="range" id="px" min="-400" max="500" step="0.5">
-          <input class="num" type="number" id="pxN" min="-400" max="500" step="0.5" aria-label="Vannrett posisjon i prosent">
+          <input type="number" id="pxN" min="-400" max="500" step="0.5" aria-label="Vannrett posisjon i prosent">
         </div>
         <div class="slider">
-          <label for="py">Flytt loddrett (%)</label>
+          <label for="py">Flytt loddrett</label>
           <input type="range" id="py" min="-400" max="500" step="0.5">
-          <input class="num" type="number" id="pyN" min="-400" max="500" step="0.5" aria-label="Loddrett posisjon i prosent">
+          <input type="number" id="pyN" min="-400" max="500" step="0.5" aria-label="Loddrett posisjon i prosent">
         </div>
-        <div class="toggle-row">
-          <span>Bytt om fargene<small>Lys form på mørk bunn</small></span>
-          <ps-toggle id="swap" label-on="På" label-off="Av" aria-label="Bytt om fargene"></ps-toggle>
-        </div>
-        <div class="btn-row">
-          <ps-button id="reset" color="primary-o" size="small" fluid><span class="ico"><ps-material-symbol symbol="restart_alt" size="small" ariahidden="true"></ps-material-symbol></span>Tilbakestill</ps-button>
-          <ps-button id="share" color="primary-o" size="small" fluid><span class="ico"><ps-material-symbol symbol="link" size="small" ariahidden="true"></ps-material-symbol></span>Kopier lenke</ps-button>
+        <label class="switch"><span>Bytt om fargene<small>Lys form på mørk bunn</small></span><input type="checkbox" role="switch" id="swap"></label>
+        <div class="row">
+          <button class="btn grow" id="reset" type="button">Tilbakestill</button>
+          <button class="btn grow" id="share" type="button">Kopier lenke til utsnittet</button>
         </div>
       </div>
-    </ps-accordion>
+    </details>
 
-    <section class="group export" aria-labelledby="h-export">
-      <h2 id="h-export">Eksporter</h2>
+    <section class="export" aria-labelledby="lbl-export">
+      <p class="label" id="lbl-export">Eksporter</p>
       <div class="scale-pick">
-        <span>PNG/JPG-oppløsning</span>
+        <span>PNG-oppløsning</span>
         <div class="seg" id="mult">
-          <ps-button data-m="1" color="primary" size="small">1×</ps-button>
-          <ps-button data-m="2" color="primary-o" size="small">2×</ps-button>
-          <ps-button data-m="3" color="primary-o" size="small">3×</ps-button>
+          <button type="button" data-m="1" aria-pressed="true">1×</button>
+          <button type="button" data-m="2" aria-pressed="false">2×</button>
+          <button type="button" data-m="3" aria-pressed="false">3×</button>
         </div>
       </div>
-      <ps-button id="dlPng" color="primary" fluid><span class="ico"><ps-material-symbol symbol="download" size="small" ariahidden="true"></ps-material-symbol></span>Last ned PNG</ps-button>
-      <div class="btn-row">
-        <ps-button id="dlSvg" color="primary-o" size="small" fluid>SVG (vektor)</ps-button>
-        <ps-button id="dlJpg" color="primary-o" size="small" fluid>JPG</ps-button>
+      <button class="btn-primary" id="dlPng" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Last ned PNG
+      </button>
+      <div class="row">
+        <button class="btn" id="dlSvg" type="button">Last ned SVG (vektor)</button>
+        <button class="btn" id="dlJpg" type="button">Last ned JPG</button>
       </div>
       <div class="outsize" id="outsize"></div>
     </section>
@@ -308,19 +443,24 @@ main {
       <div class="canvas-wrap"><canvas id="preview" tabindex="0" aria-label="Forhåndsvisning. Dra for å flytte, scroll for å skalere."></canvas></div>
     </div>
     <div class="shuffle-bar">
-      <ps-button id="prev" color="primary-o" class="is-disabled" aria-disabled="true" title="Gå tilbake til forrige utsnitt"><span class="ico"><ps-material-symbol symbol="undo" size="small" ariahidden="true"></ps-material-symbol></span>Forrige</ps-button>
-      <ps-button id="random" color="primary" size="large"><span class="ico"><ps-material-symbol symbol="shuffle" size="small" ariahidden="true"></ps-material-symbol></span>Nytt utsnitt</ps-button>
+      <button class="btn-ghost" id="prev" type="button" disabled title="Gå tilbake til forrige utsnitt">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Forrige
+      </button>
+      <button class="btn-shuffle" id="random" type="button">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
+        Nytt utsnitt
+      </button>
     </div>
     <div class="hint">
       <span><kbd>Mellomrom</kbd> gir nytt utsnitt</span>
       <span>Dra i bildet for å flytte</span>
       <span>Scroll eller klyp for å skalere</span>
-      <span><kbd>Shift</kbd> + scroll roterer</span>
-      <span><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> finjusterer</span>
+      <span><kbd>Shift</kbd> + scroll for å rotere</span>
+      <span><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> finjusterer</span>
     </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </main>
 </div>
-<div class="toast-host"><ps-toast id="toast" severity="success" auto-hide-duration="2200" close-button-label="Lukk"></ps-toast></div>
 
 <script>
 (() => {
@@ -332,6 +472,8 @@ main {
     'M1105.61,425.73v573.29s-381.6,0-381.6,0v170.2s465.8,0,465.8,0c46.58,0,84.2-37.62,84.2-84.2V194.62c0-46.58-37.62-84.2-84.2-84.2h-465.8c0,93.16,75.24,170.2,170.2,170.2h338.6s0,19.71,0,19.71c-69.87-1.79-127.2,55.54-127.2,125.41h0Z'
   ];
   const P2D = PATHS.map(d => new Path2D(d));
+  document.getElementById('logoA').setAttribute('d', PATHS[0]);
+  document.getElementById('logoB').setAttribute('d', PATHS[1]);
 
   const FORMATS = [
     { id: 'sq',   name: 'Kvadrat',  ratio: '1:1',    w: 1080, h: 1080 },
@@ -477,26 +619,12 @@ main {
   $('rotR').addEventListener('click', () => { state.r = normRot(state.r + 90); sync(); draw(); saveLocal(); });
   $('flipX').addEventListener('click', () => { state.fx = !state.fx; sync(); draw(); saveLocal(); });
   $('flipY').addEventListener('click', () => { state.fy = !state.fy; sync(); draw(); saveLocal(); });
-  // PUI-toggle sender hendelsen «toggle» med { value }
-  $('swap').addEventListener('toggle', e => { if (!e.detail) return; state.sw = !!e.detail.value; draw(); saveLocal(); });
-  $('guide').addEventListener('toggle', e => { if (!e.detail) return; guide = !!e.detail.value; draw(); });
+  $('swap').addEventListener('change', e => { state.sw = e.target.checked; draw(); saveLocal(); });
+  $('guide').addEventListener('change', e => { guide = e.target.checked; draw(); });
 
   const clampDim = v => Math.min(8000, Math.max(50, Math.round(+v || 0)));
-  // PUI-tekstfelt: målene tas i bruk når feltet forlates eller man trykker Enter
-  function bindDim(id, key) {
-    const el = $(id);
-    const commit = () => {
-      const inner = el.querySelector('input');
-      const v = inner ? inner.value : el.value;
-      const n = clampDim(v);
-      if (n !== state[key]) { state[key] = n; sync(); layout(); saveLocal(); }
-      else sync();
-    };
-    el.addEventListener('focusout', commit);
-    el.addEventListener('keydown', e => { if (e.key === 'Enter') commit(); });
-  }
-  bindDim('cw', 'w');
-  bindDim('ch', 'h');
+  $('cw').addEventListener('change', e => { state.w = clampDim(e.target.value); sync(); layout(); saveLocal(); });
+  $('ch').addEventListener('change', e => { state.h = clampDim(e.target.value); sync(); layout(); saveLocal(); });
 
   $('reset').addEventListener('click', () => {
     const { f, w, h } = state;
@@ -505,7 +633,7 @@ main {
   });
 
   $('mult').addEventListener('click', e => {
-    const b = e.target.closest('ps-button'); if (!b) return;
+    const b = e.target.closest('button'); if (!b) return;
     mult = +b.dataset.m; sync();
   });
 
@@ -518,21 +646,10 @@ main {
     const t = r.toFixed(2).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',');
     return w >= h ? `${t}:1` : `1:${t}`;
   }
-  // Valgt-tilstand for PUI-knapper: fylt (primary) når valgt, omriss (primary-o) ellers
-  function pressed(el, on) {
-    el.setAttribute('color', on ? 'primary' : 'primary-o');
-    el.setAttribute('aria-pressed', String(on));
-  }
-  function setField(id, v) {
-    const el = $(id);
-    if (el.contains(document.activeElement)) return;     // ikke overskriv mens man skriver
-    el.value = String(v);
-    const inner = el.querySelector('input'); if (inner) inner.value = String(v);
-  }
   function sync() {
     fmtBox.querySelectorAll('.fmt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === state.f)));
     $('customBox').hidden = state.f !== 'cust';
-    setField('cw', state.w); setField('ch', state.h);
+    $('cw').value = state.w; $('ch').value = state.h;
     const custBtn = fmtBox.querySelector('[data-id="cust"]');
     if (custBtn) {
       custBtn.querySelector('.ratio').textContent = state.f === 'cust' ? ratioLabel(state.w, state.h) : 'B:H';
@@ -543,11 +660,10 @@ main {
     $('rot').value = state.r;  $('rotN').value = fix(state.r);
     $('px').value = state.x;   $('pxN').value = fix(state.x);
     $('py').value = state.y;   $('pyN').value = fix(state.y);
-    pressed($('flipX'), state.fx);
-    pressed($('flipY'), state.fy);
-    $('swap').value = state.sw;
-    $('guide').value = guide;
-    $('mult').querySelectorAll('ps-button').forEach(b => pressed(b, +b.dataset.m === mult, 'primary'));
+    $('flipX').setAttribute('aria-pressed', String(state.fx));
+    $('flipY').setAttribute('aria-pressed', String(state.fy));
+    $('swap').checked = state.sw;
+    $('mult').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.m === mult)));
     $('outsize').textContent = `PNG/JPG: ${state.w * mult} × ${state.h * mult} px  ·  SVG: ${state.w} × ${state.h}`;
   }
 
@@ -681,22 +797,17 @@ main {
     return p;   // 0 = oppfyller alle reglene
   }
 
-  const undoStack = [];
-  function setPrevEnabled(on) {
-    const b = $('prev');
-    b.classList.toggle('is-disabled', !on);
-    b.setAttribute('aria-disabled', String(!on));
-  }
+  const history = [];
   function pushHistory() {
-    undoStack.push({ ...state });
-    if (undoStack.length > 40) undoStack.shift();
-    setPrevEnabled(true);
+    history.push({ ...state });
+    if (history.length > 40) history.shift();
+    $('prev').disabled = false;
   }
   $('prev').addEventListener('click', () => {
-    const last = undoStack.pop();
+    const last = history.pop();
     if (!last) return;
     state = { ...last, f: state.f, w: state.w, h: state.h };
-    setPrevEnabled(undoStack.length > 0);
+    $('prev').disabled = history.length === 0;
     sync(); draw(); saveLocal();
   });
 
@@ -716,13 +827,13 @@ main {
   document.addEventListener('keydown', e => {
     if (e.code !== 'Space' || e.repeat) return;
     const t = e.target;
-    if (t.closest && t.closest('input, button, select, textarea, ps-toggle, ps-button, ps-text-field, ps-accordion')) return;
+    if (t.closest && t.closest('input, button, select, textarea, summary')) return;
     e.preventDefault(); randomize();
   });
 
   // Husk om finjusteringspanelet er åpent
-  try { if (localStorage.getItem('ps-bg-fine') === '1') $('fine').expanded = true; } catch (e) {}
-  $('fine').addEventListener('expand', e => { try { localStorage.setItem('ps-bg-fine', e.detail && e.detail.value ? '1' : '0'); } catch (err) {} });
+  try { if (localStorage.getItem('ps-bg-fine') === '1') $('fine').open = true; } catch (e) {}
+  $('fine').addEventListener('toggle', () => { try { localStorage.setItem('ps-bg-fine', $('fine').open ? '1' : '0'); } catch (e) {} });
 
   // ---------- Eksport ----------
   const fileBase = () => `patentstyret-bakgrunn-${state.w}x${state.h}`;
@@ -799,9 +910,11 @@ main {
     } else { history.replaceState(null, '', url); toast('Lenken ligger i adressefeltet'); }
   });
 
+  let toastT;
   function toast(msg) {
     const t = $('toast');
-    customElements.whenDefined('ps-toast').then(() => { if (t.show) t.show(msg); });
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800);
   }
 
   // ---------- Oppstart ----------
@@ -815,11 +928,6 @@ main {
     if (!loaded) randomize({ silent: true });
     new ResizeObserver(layout).observe(stage);
     if (document.fonts) document.fonts.ready.then(draw);
-    // PUI-komponentene lastes asynkront; synk verdiene på nytt når de er klare
-    if (window.customElements) {
-      Promise.all(['ps-toggle', 'ps-text-field', 'ps-button', 'ps-accordion'].map(t => customElements.whenDefined(t)))
-        .then(() => requestAnimationFrame(() => { sync(); layout(); }));
-    }
   })();
 })();
 </script>
