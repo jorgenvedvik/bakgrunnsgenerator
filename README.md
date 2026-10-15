@@ -9,7 +9,9 @@ Utsnittet består av logosymbolet (#002b25) på bakgrunnsfargen (#00342e).
 - Tilfeldige utsnitt følger reglene fra de håndlagde utsnittene: symbolet forstørret 5,6–8,6×, innhugget
   (enden av den smale kanalen) nær en kant, minst to hjørner dekket og en rolig midtsone for tekst.
   Reglene står i `RULES` og `TIPS` i `index.html`.
-- **Finjuster utsnittet** (sammenleggbart panel) har skalering, rotasjon, speiling, posisjon og fargebytte.
+- Formater, Forrige, Nytt utsnitt, **Juster** og **Last ned** ligger i dokken nederst. Juster åpner en skuff med
+  skalering, rotasjon, speiling, posisjon, fargebytte og hjelpelinjer. Bytter man format, lages et nytt utsnitt
+  automatisk, med mindre utsnittet er justert for hånd.
 - Finjuster: dra i bildet for å flytte, scroll/klyp for å skalere, Shift + scroll for å rotere, piltaster for små steg.
 - Eksporter som PNG (1×, 2× eller 3×), JPG eller SVG (vektor, åpnes i Figma/InDesign/Illustrator).
 - **Kopier lenke til utsnittet** gir en lenke som åpner nøyaktig samme utsnitt hos en kollega.
