@@ -1,0 +1,2 @@
+const t=t=>{if(!t){return{attr:{}}}let e;if(typeof t==="string"){e=JSON.parse(t)}else{e=Object.assign({},t)}const r=e.class;delete e.class;return{rootClass:r,attr:e}};export{t as p};
+//# sourceMappingURL=p-DZNp3dS9.js.map

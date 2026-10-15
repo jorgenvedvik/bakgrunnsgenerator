@@ -15,5 +15,11 @@ Utsnittet består av logosymbolet (#002b25) på bakgrunnsfargen (#00342e).
 - **Kopier lenke til utsnittet** gir en lenke som åpner nøyaktig samme utsnitt hos en kollega.
 
 ## Teknisk
+Grensesnittet bruker PUI, Patentstyrets designsystem (`@patentstyret/designsystem` 1.2.0, https://pui.patentstyret.no).
+Komponentene ligger i `vendor/pui/` (uten kildekart), så siden ikke er avhengig av en ekstern CDN.
+Brukt: `ps-logo`, `ps-button`, `ps-toggle`, `ps-text-field`, `ps-accordion`, `ps-toast`, `ps-material-symbol` og PUI-tokenene (`--ds-*`).
+Formatkortene og gliderne finnes ikke i PUI, og er bygget med PUI-tokenene.
+For å oppgradere PUI: `npm pack @patentstyret/designsystem@<versjon>` og kopier `dist/ps-designsystem/` og `dist/global/global.css` til `vendor/pui/`.
+
 Én statisk fil (`index.html`), ingen byggesteg. Vercel publiserer den direkte fra `main`.
 Farger og logosti ligger øverst i skriptet (`COLORS` og `PATHS`).

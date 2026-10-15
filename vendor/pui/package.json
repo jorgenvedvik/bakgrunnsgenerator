@@ -1,0 +1,44 @@
+{
+  "name": "@patentstyret/designsystem",
+  "version": "1.2.0",
+  "description": "Plattform-agnostisk komponent-bibliotek basert på Patentstyrets design profil",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://dev.azure.com/patentstyret-etjenester/Designsystem/_git/ps-designsystem"
+  },
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "esnext": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/ps-designsystem/ps-designsystem.esm.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build:styles": "sass src/global/global.scss src/global/global.css",
+    "build": "npm run build:styles && stencil build",
+    "postbuild": "mkdir -p dist/global && cp ./src/global/global.css ./src/design-tokens/design-tokens.ts ./dist/collection/design-tokens/* dist/global",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll",
+    "generate": "stencil generate"
+  },
+  "dependencies": {
+    "@stencil/core": "*"
+  },
+  "devDependencies": {
+    "@stencil/angular-output-target": "*",
+    "@stencil/react-output-target": "^0.8.2",
+    "@stencil/sass": "*",
+    "@types/node": "*",
+    "puppeteer": "*",
+    "typescript": "*"
+  },
+  "license": "MIT"
+}
