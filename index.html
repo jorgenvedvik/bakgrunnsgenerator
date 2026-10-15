@@ -96,6 +96,7 @@ section.group { display: flex; flex-direction: column; gap: 10px; }
 }
 .fmt .shape { border: 1.5px solid currentColor; border-radius: 2px; opacity: .75; }
 .fmt .name { font-size: 12px; line-height: 1.1; }
+.fmt .ratio { font: 500 13px/1 var(--font-mono); letter-spacing: .02em; }
 .fmt .dim { font: 400 10px/1 var(--font-mono); color: var(--ink-dim); }
 .fmt[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
 .fmt[aria-pressed="true"] .dim { color: var(--accent); opacity: .8; }
@@ -131,7 +132,7 @@ input[type="range"] {
 }
 
 .row { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
-.btn.grow, .row .btn { justify-content: center; padding-inline: 6px; }
+.btn.grow, .row .btn { justify-content: center; padding-inline: 4px; gap: 4px; min-width: 0; font-size: 12.5px; }
 .btn {
   appearance: none;
   border: 1px solid var(--line);
@@ -183,8 +184,26 @@ details.fine[open] summary { border-bottom: 1px solid var(--line); border-radius
 }
 .btn-random:hover { border-color: var(--accent); color: var(--accent); }
 
-.check { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
-.check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+.switch {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 13px; cursor: pointer;
+}
+.switch > span { display: flex; flex-direction: column; gap: 2px; }
+.switch small { color: var(--ink-dim); font-size: 12px; }
+.switch input {
+  appearance: none; -webkit-appearance: none; flex: none; margin: 0; cursor: pointer;
+  width: 38px; height: 22px; border-radius: 999px;
+  background: var(--field); border: 1px solid #1b6a5f;
+  position: relative; transition: background .18s, border-color .18s;
+}
+.switch input::after {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--ink-dim); transition: transform .18s, background .18s;
+}
+.switch input:checked { background: var(--accent); border-color: var(--accent); }
+.switch input:checked::after { transform: translateX(16px); background: var(--accent-ink); }
+@media (prefers-reduced-motion: reduce) { .switch input, .switch input::after { transition: none; } }
 
 /* Eksport */
 .export {
@@ -345,7 +364,7 @@ main {
 
     <section class="group" aria-labelledby="lbl-utsnitt">
       <p class="label" id="lbl-utsnitt">Visning</p>
-      <label class="check"><input type="checkbox" id="guide" checked> Vis hjelpelinjer for tekst og logo</label>
+      <label class="switch"><span>Vis hjelpelinjer for tekst og logo</span><input type="checkbox" role="switch" id="guide" checked></label>
     </section>
 
     <details class="fine" id="fine">
@@ -389,7 +408,7 @@ main {
           <input type="range" id="py" min="-400" max="500" step="0.5">
           <input type="number" id="pyN" min="-400" max="500" step="0.5" aria-label="Loddrett posisjon i prosent">
         </div>
-        <label class="check"><input type="checkbox" id="swap"> Bytt om fargene (lys form på mørk bunn)</label>
+        <label class="switch"><span>Bytt om fargene<small>Lys form på mørk bunn</small></span><input type="checkbox" role="switch" id="swap"></label>
         <div class="row">
           <button class="btn grow" id="reset" type="button">Tilbakestill</button>
           <button class="btn grow" id="share" type="button">Kopier lenke til utsnittet</button>
@@ -462,7 +481,7 @@ main {
     { id: 'st',   name: 'Story',    ratio: '9:16',   w: 1080, h: 1920 },
     { id: 'li',   name: 'Lenke',    ratio: '1,91:1', w: 1200, h: 628  },
     { id: 'wide', name: 'Bred',     ratio: '16:9',   w: 1920, h: 1080 },
-    { id: 'cust', name: 'Annet',    ratio: 'B×H',    w: 1080, h: 1080 },
+    { id: 'cust', name: 'Annet',    ratio: 'B:H',    w: 1080, h: 1080 },
   ];
 
   // Standard = Patentstyrets eget kvadratiske utsnitt (målt fra Bakgrunn_01)
@@ -570,7 +589,7 @@ main {
     const max = 22;
     const sw = f.id === 'cust' ? 18 : (f.w >= f.h ? max : Math.round(max * f.w / f.h));
     const sh = f.id === 'cust' ? 14 : (f.h >= f.w ? max : Math.round(max * f.h / f.w));
-    b.innerHTML = `<span class="shape" style="width:${sw}px;height:${sh}px;${f.id === 'cust' ? 'border-style:dashed' : ''}"></span><span class="name">${f.name}</span><span class="dim">${f.id === 'cust' ? 'egendefinert' : f.w + '×' + f.h}</span>`;
+    b.innerHTML = `<span class="shape" style="width:${sw}px;height:${sh}px;${f.id === 'cust' ? 'border-style:dashed' : ''}"></span><span class="name">${f.name}</span><span class="ratio">${f.ratio}</span><span class="dim">${f.id === 'cust' ? 'egendefinert' : f.w + '×' + f.h}</span>`;
     b.addEventListener('click', () => {
       state.f = f.id;
       if (f.id !== 'cust') { state.w = f.w; state.h = f.h; }
@@ -618,10 +637,24 @@ main {
     mult = +b.dataset.m; sync();
   });
 
+  // Forenkler bredde:høyde til et lesbart forhold, f.eks. 1200×628 → 1,91:1
+  function ratioLabel(w, h) {
+    const g = (a, b) => b ? g(b, a % b) : a;
+    const d = g(w, h), a = w / d, b = h / d;
+    if (a <= 32 && b <= 32) return `${a}:${b}`;
+    const r = w >= h ? w / h : h / w;
+    const t = r.toFixed(2).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',');
+    return w >= h ? `${t}:1` : `1:${t}`;
+  }
   function sync() {
     fmtBox.querySelectorAll('.fmt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === state.f)));
     $('customBox').hidden = state.f !== 'cust';
     $('cw').value = state.w; $('ch').value = state.h;
+    const custBtn = fmtBox.querySelector('[data-id="cust"]');
+    if (custBtn) {
+      custBtn.querySelector('.ratio').textContent = state.f === 'cust' ? ratioLabel(state.w, state.h) : 'B:H';
+      custBtn.querySelector('.dim').textContent = state.f === 'cust' ? `${state.w}×${state.h}` : 'egendefinert';
+    }
     const fix = v => Math.round(v * 10) / 10;
     $('size').value = state.s; $('sizeN').value = Math.round(state.s);
     $('rot').value = state.r;  $('rotN').value = fix(state.r);
